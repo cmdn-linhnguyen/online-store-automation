@@ -1,0 +1,44 @@
+{
+  "name": "online-store-automation",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Playwright automation boilerplate for end-to-end and API testing.",
+  "packageManager": "pnpm@10.33.0",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "scripts": {
+    "test": "node ./scripts/run-playwright.mjs test",
+    "test:ui": "node ./scripts/run-playwright.mjs test --ui",
+    "test:headed": "node ./scripts/run-playwright.mjs test --headed",
+    "test:debug": "node ./scripts/run-playwright.mjs test --debug",
+    "test:list": "node ./scripts/run-playwright.mjs test --list",
+    "test:smoke": "node ./scripts/run-playwright.mjs test --grep @smoke",
+    "test:cross-browser": "cross-env CROSS_BROWSER=true node ./scripts/run-playwright.mjs test",
+    "test:local": "cross-env TEST_ENV=local node ./scripts/run-playwright.mjs test",
+    "test:stg": "cross-env TEST_ENV=stg node ./scripts/run-playwright.mjs test",
+    "test:prod": "cross-env TEST_ENV=prod node ./scripts/run-playwright.mjs test",
+    "report": "node ./scripts/run-playwright.mjs show-report",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier . --write",
+    "format:check": "prettier . --check",
+    "pw:install": "node ./scripts/run-playwright.mjs install",
+    "pw:codegen": "node ./scripts/run-playwright.mjs codegen"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@playwright/test": "^1.61.0",
+    "@types/node": "^25.9.3",
+    "cross-env": "^10.1.0",
+    "dotenv": "^17.4.2",
+    "eslint": "^10.5.0",
+    "eslint-plugin-playwright": "^2.10.4",
+    "globals": "^17.6.0",
+    "prettier": "^3.8.4",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.61.1",
+    "zod": "^4.4.3"
+  }
+}
