@@ -50,3 +50,74 @@ Page/Component Object: [tests/pages/search.page.ts](../../tests/pages/search.pag
   — nên chỉ verify category+price cùng lúc, brand test riêng.
 - Đã chạy ổn định 15/15 hai lần liên tiếp trên `dev.menu.starbucks.co.jp` (`BROWSER_CHANNEL=` override
   do channel `chrome` trong `.env` chưa cài trên máy chạy, dùng Chromium bundled thay thế).
+
+## search-results.spec.ts
+
+Spec: [tests/e2e/search/search-results.spec.ts](../../tests/e2e/search/search-results.spec.ts)
+Page/Component Object: [tests/pages/search.page.ts](../../tests/pages/search.page.ts),
+[tests/pages/components/sort-select.component.ts](../../tests/pages/components/sort-select.component.ts),
+[tests/pages/components/pagination.component.ts](../../tests/pages/components/pagination.component.ts),
+[tests/pages/components/product-list.component.ts](../../tests/pages/components/product-list.component.ts)
+
+Phần còn lại của trang Search ngoài sidebar (đã có spec riêng ở trên): search bar, sort, phân trang,
+card sản phẩm, empty state, deep-link.
+
+### Search bar (3 case)
+
+| # | Tên test | Kịch bản | Kỳ vọng chính |
+|---|---|---|---|
+| 1 🔥 | should keep the URL unchanged while typing and only navigate on submit | Ở page=2, gõ từ khoá "コーヒー", chưa submit; sau đó nhấn Enter | Gõ chữ không đổi URL; sau submit thì `query` xuất hiện đúng giá trị và `page` bị xoá |
+| 2 | should truncate a keyword longer than 100 characters when submitted | Gõ chuỗi 150 ký tự, submit | `query` trên URL bị cắt còn đúng 100 ký tự |
+| 3 | should clear the input without changing the URL until the next submit | Vào `/search?query=...`, bấm nút xoá (X) | Input hiển thị trống, nhưng URL vẫn giữ `query` cũ cho tới lần submit tiếp theo |
+
+### Sort (2 case)
+
+| # | Tên test | Kịch bản | Kỳ vọng chính |
+|---|---|---|---|
+| 4 🔥 | should update the sort query param when changing sort order | Đổi sort sang "価格が高い順" rồi "価格が安い順" | `sort` param cập nhật đúng theo từng lựa chọn |
+| 5 | should not reset the page number when changing sort order | Ở page=2, đổi sort | `sort` cập nhật nhưng `page=2` vẫn giữ nguyên (khác với đổi category/filter) |
+
+### Pagination (3 case)
+
+| # | Tên test | Kịch bản | Kỳ vọng chính |
+|---|---|---|---|
+| 6 🔥 | should keep existing params when navigating to page 2 via the page selector | Có sẵn `sort`, chọn trang 2 qua dropdown phân trang | `page=2` và `sort` cùng tồn tại trên URL |
+| 7 | should disable prev on the first page and next on the last page | Kiểm tra nút Prev ở trang 1; đọc trang cuối cùng động từ dropdown rồi vào thẳng trang đó | Nút Prev disabled ở trang 1, nút Next disabled ở trang cuối |
+| 8 | should move exactly one page when using the prev/next step buttons | Từ page=2 bấm Next rồi Previous | Di chuyển đúng 1 trang mỗi lần (→ page=3 → về page=2) |
+
+### Product card (2 case)
+
+| # | Tên test | Kịch bản | Kỳ vọng chính |
+|---|---|---|---|
+| 9 🔥 | should navigate to the product detail page matching the clicked card | Click card sản phẩm đầu tiên trong lưới kết quả | Điều hướng đúng tới URL (`href`) của chính card đó |
+| 10 | should render product name, price, and image content for each card | Mở `/search` (không filter) | Mọi card có tên sản phẩm không rỗng; ít nhất 1 giá hiển thị đúng định dạng `¥1,234`/`¥1,234~¥5,678`; ít nhất 1 card có ảnh (`src` không rỗng) |
+
+### Empty state (1 case)
+
+| # | Tên test | Kịch bản | Kỳ vọng chính |
+|---|---|---|---|
+| 11 🔥 | should show the empty state and hide the product grid/pagination for a no-match keyword | Tìm với từ khoá chắc chắn không có kết quả | Hiện thông báo "không tìm thấy", ẩn hoàn toàn lưới sản phẩm và phân trang |
+
+### Deep link (1 case)
+
+| # | Tên test | Kịch bản | Kỳ vọng chính |
+|---|---|---|---|
+| 12 | should reflect query, page, and sort directly from a deep-linked URL | Mở thẳng `/search?query=...&page=2&sort=price_high` | Input từ khoá, dropdown trang, dropdown sort đều phản ánh đúng giá trị lấy từ URL |
+
+🔥 = tagged `@smoke`.
+
+### Lưu ý khi verify
+
+- Test #4 chỉ spot-check 2/4 hướng sort (price_high, price_low) — popular/newest dùng chung cơ chế
+  `Select` nên không test riêng để giảm phụ thuộc dữ liệu catalog thật.
+- Test #7 đọc trang cuối cùng **động** từ dropdown thay vì hardcode số trang, tránh phụ thuộc vào
+  tổng số sản phẩm hiện có trong catalog thật.
+- Test #9 chỉ verify điều hướng đúng `href` của card. Test #10 verify nội dung cơ bản (tên/giá/ảnh)
+  vốn không phụ thuộc loại tag cụ thể. Cả hai đều **không** verify nội dung tag hiển thị trên card
+  (Gold-member/custom bottle/personalize/drink-ticket/"ROASTERY TOKYO"...) — việc đó bị **hoãn** (xem
+  `docs/test-plan.md` §4.1) vì cần sản phẩm mẫu cố định cho từng loại tag mà catalog thật không đảm
+  bảo có sẵn.
+- Deep-link (#12) không test lại `category_code` — phần đó đã được `sidebar.spec.ts` test đầy đủ qua
+  các lệnh `goto({ category_code })` của nó, tránh trùng lặp.
+- Đã chạy ổn định 27/27 (gộp chung với `sidebar.spec.ts` trong cùng thư mục) hai lần liên tiếp trên
+  `dev.menu.starbucks.co.jp`, và `pnpm test:smoke` chạy đúng 7/7 test đã gắn `@smoke`.

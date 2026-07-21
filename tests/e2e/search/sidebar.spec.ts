@@ -85,7 +85,6 @@ test.describe(`Search | Sidebar ${testTags.regression}`, () => {
 
     test('should apply the purchase-location filter, which stays visible regardless of category', async ({
       searchPage,
-      page,
     }) => {
       await searchPage.goto();
 
@@ -95,7 +94,6 @@ test.describe(`Search | Sidebar ${testTags.regression}`, () => {
 
       const selectedValue = await searchPage.sidebarFilter.selectFirstOptionInSection('取り扱い場所', 'desktop');
       await searchPage.expectQueryParamValue('purchase_methods', selectedValue);
-      await expect(page).toHaveURL(new RegExp(`purchase_methods=${selectedValue}`));
 
       await test.step('Purchase location stays visible even under a category that hides other sections', async () => {
         await searchPage.goto({ category_code: searchData.categories.beverage.value });
@@ -105,7 +103,6 @@ test.describe(`Search | Sidebar ${testTags.regression}`, () => {
 
     test(`should apply brand and price as independent single-select filters and combine price with a category ${testTags.smoke}`, async ({
       searchPage,
-      page,
     }) => {
       await test.step('Brand applies, then resets back to "all" (other brands disable once one is active)', async () => {
         await searchPage.goto();
@@ -129,11 +126,9 @@ test.describe(`Search | Sidebar ${testTags.regression}`, () => {
         await searchPage.expectQueryParamValue('category_code', searchData.categories.beans.value);
         await searchPage.expectQueryParamValue('price', searchData.price.over5000.value);
       });
-
-      await expect(page).toHaveURL(new RegExp(`category_code=${searchData.categories.beans.value}`));
     });
 
-    test('should toggle both online-store checkboxes independently and together', async ({ searchPage, page }) => {
+    test('should toggle both online-store checkboxes independently and together', async ({ searchPage }) => {
       await searchPage.goto();
 
       await searchPage.selectFilterOption('オンラインストア', searchData.onlineStore.inventoryQuantity.label, 'desktop');
@@ -143,11 +138,9 @@ test.describe(`Search | Sidebar ${testTags.regression}`, () => {
       await searchPage.selectFilterOption('オンラインストア', searchData.onlineStore.onlineStoreOnly.label, 'desktop');
       await searchPage.expectQueryParamValue(searchData.onlineStore.inventoryQuantity.param, 'true');
       await searchPage.expectQueryParamValue(searchData.onlineStore.onlineStoreOnly.param, 'true');
-      await expect(page).toHaveURL(/inventory_quantity=true/);
-      await expect(page).toHaveURL(/online_store=true/);
     });
 
-    test('should combine multiple checkboxes within one bean-classification section', async ({ searchPage, page }) => {
+    test('should combine multiple checkboxes within one bean-classification section', async ({ searchPage }) => {
       await searchPage.goto({ category_code: searchData.categories.beans.value });
 
       await searchPage.selectFilterOption('スターバックスロースト', searchData.beanClassification.blonde.label, 'desktop');
@@ -157,21 +150,18 @@ test.describe(`Search | Sidebar ${testTags.regression}`, () => {
         searchData.beanClassification.blonde.value,
         searchData.beanClassification.dark.value,
       ]);
-      await expect(page).toHaveURL(/bean_classification=/);
     });
 
-    test('should only show the 商品仕様 section for tumbler/mug categories', async ({ searchPage, page }) => {
+    test('should only show the 商品仕様 section for tumbler/mug categories', async ({ searchPage }) => {
       await searchPage.goto({ category_code: searchData.categories.beans.value });
       await searchPage.expectSidebarSectionHidden('商品仕様', 'desktop');
 
       await searchPage.goto({ category_code: searchData.categories.tumblerMug.value });
       await searchPage.expectSidebarSectionVisible('商品仕様', 'desktop');
-      await expect(page).toHaveURL(new RegExp(`category_code=${searchData.categories.tumblerMug.value}`));
     });
 
     test('should drop a filter param from the URL when selecting a category that hides its section', async ({
       searchPage,
-      page,
     }) => {
       // No category selected yet, so the full top-level category list (incl. beverage) is
       // clickable in the sidebar — once a category is selected, the sidebar narrows to just that
@@ -182,7 +172,6 @@ test.describe(`Search | Sidebar ${testTags.regression}`, () => {
       await searchPage.selectCategory(searchData.categories.beverage.label, 'desktop');
       await searchPage.expectQueryParamValue('category_code', searchData.categories.beverage.value);
       await searchPage.expectQueryParamMissing('price');
-      await expect(page).toHaveURL(new RegExp(`category_code=${searchData.categories.beverage.value}`));
     });
   });
 
@@ -191,7 +180,6 @@ test.describe(`Search | Sidebar ${testTags.regression}`, () => {
 
     test(`should show one removable tag per applied filter and remove only the deleted one ${testTags.smoke}`, async ({
       searchPage,
-      page,
     }) => {
       await searchPage.goto();
       await searchPage.selectCategory(searchData.categories.beans.label, 'desktop');
@@ -209,8 +197,6 @@ test.describe(`Search | Sidebar ${testTags.regression}`, () => {
         await searchPage.sidebarFilter.expectTagVisible(searchData.categories.beans.label);
         await searchPage.sidebarFilter.expectTagAbsent(searchData.brand.starbucksCoffee.label);
       });
-
-      await expect(page).toHaveURL(new RegExp(`category_code=${searchData.categories.beans.value}`));
     });
   });
 
@@ -268,7 +254,6 @@ test.describe(`Search | Sidebar ${testTags.regression}`, () => {
 
     test('should close the mobile drawer without mutating URL when the overlay backdrop is clicked', async ({
       searchPage,
-      page,
     }) => {
       await searchPage.goto();
       await searchPage.openMobileSidebar();
@@ -277,12 +262,10 @@ test.describe(`Search | Sidebar ${testTags.regression}`, () => {
       await searchPage.sidebarFilter.closeMobileViaOverlay();
       await searchPage.expectMobileSidebarClosed();
       await searchPage.expectQueryParamMissing('category_code');
-      await expect(page).toHaveURL(new RegExp(`${searchData.path.replace('/', '\\/')}$`));
     });
 
     test('should keep unsubmitted selections checked after closing and reopening the drawer', async ({
       searchPage,
-      page,
     }) => {
       await searchPage.goto();
       await searchPage.openMobileSidebar();
@@ -293,7 +276,6 @@ test.describe(`Search | Sidebar ${testTags.regression}`, () => {
 
       await searchPage.openMobileSidebar();
       await searchPage.sidebarFilter.expectOptionChecked('カテゴリー', searchData.categories.beans.label, 'mobile');
-      await expect(page).toHaveURL(new RegExp(`${searchData.path.replace('/', '\\/')}$`));
     });
 
     test('should submit multiple filters selected in the drawer together', async ({ searchPage, page }) => {
@@ -312,7 +294,6 @@ test.describe(`Search | Sidebar ${testTags.regression}`, () => {
       await searchPage.expectLoaded();
       await searchPage.expectQueryParamValue('category_code', searchData.categories.beans.value);
       await searchPage.expectQueryParamValue('brand_code', searchData.brand.teavana.value);
-      await expect(page).toHaveURL(new RegExp(`category_code=${searchData.categories.beans.value}`));
     });
   });
 });

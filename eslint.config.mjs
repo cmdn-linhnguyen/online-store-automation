@@ -58,6 +58,10 @@ export default tseslint.config(
     rules: {
       ...playwright.configs['flat/recommended'].rules,
       'playwright/no-focused-test': 'error',
+      // Repo convention puts assertions inside Page/Component Object `expectXxx()` methods (see
+      // CLAUDE.md) rather than inline `expect()` calls in specs — recognize that naming pattern so
+      // the rule doesn't flag tests that only assert through those helpers.
+      'playwright/expect-expect': ['warn', { assertFunctionPatterns: ['^expect'] }],
     },
   },
 );
