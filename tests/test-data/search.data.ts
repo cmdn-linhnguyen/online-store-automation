@@ -41,4 +41,13 @@ export const searchData = {
     blonde: { label: 'ブロンド ロースト（軽やかな風味）', value: 'STARBUCKS_BLONDE_ROAST' },
     dark: { label: 'ダーク ロースト（力強い風味）', value: 'STARBUCKS_DARK_ROAST' },
   },
+  search: {
+    broadKeyword: 'コーヒー',
+    noMatchKeyword: 'zzz-no-such-product-should-ever-match-zzz-123456',
+    longKeyword: 'a'.repeat(150),
+  },
+  sort: {
+    priceHigh: { label: '価格が高い順', value: 'price_high' },
+    priceLow: { label: '価格が安い順', value: 'price_low' },
+  },
 } as const;

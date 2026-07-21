@@ -55,8 +55,19 @@ filter tags (show + individual removal), category-switch dropping now-hidden fil
 overlay-click close, and unsubmitted-state persistence on drawer reopen — see
 [tests/e2e/search/sidebar.spec.ts](../tests/e2e/search/sidebar.spec.ts).
 
+Also covered (see [tests/e2e/search/search-results.spec.ts](../tests/e2e/search/search-results.spec.ts)):
+search bar (typing has no URL effect, submit navigates + resets page, 100-char truncation, clear
+button doesn't touch the URL), sort dropdown (2 of 4 directions + page-not-reset behavior),
+pagination (page-select navigation, prev/next disabled at boundaries, prev/next step buttons),
+product card click-through to Product Detail, empty state, and a query+page+sort deep-link.
+
 Still missing:
-- [ ] Search bar: typing a keyword updates results; 99-char limit; clear button resets keyword + URL.
+- [x] Search bar (source-verified, `Pages/Search/childComponents/SearchBar.vue`): submit-based, not
+      live — typing only updates local state, URL only changes on submit (Enter) and resets `page`.
+      The keyword cap is actually **100 chars** (`/.{99}./` matches 99+1), not 99 — only the
+      submitted `query` param gets truncated, typing itself isn't blocked. The clear button
+      (`.search-reset`) only clears the visible input/local state — it does **not** touch the URL by
+      itself, only a subsequent submit does.
 - [x] Applied filter tags: correct tag shown, clicking (x) removes one filter and updates URL/results.
 - [x] Combining multiple filters at once — covered as category+price, and as multiple checkboxes
       within one section (online-store, bean-classification). A literal 4-way
@@ -64,14 +75,37 @@ Still missing:
       is selected, all other brand options become disabled (single-select-only, no direct
       switching), and brand+category+price combinations can have zero overlapping live products —
       both make a fixed 4-way assertion flaky against live catalog data.
-- [ ] Sort dropdown: changing order (popular / newest / price low-to-high / price high-to-low) →
-      product order & `sort` query param update correctly.
-- [ ] Pagination: page navigation keeps active filters in the URL, prev/next disabled at boundaries.
-- [ ] Product card: click → navigates correctly to Product Detail (`/{code}`); tags render correctly
-      by type (custom bottle / personalization / custom+personalization / limited store / online-only).
-- [ ] Empty state: no-match query → shows message + suggestions, doesn't render a stale result sidebar.
-- [ ] Deep-link: opening `/search?category_code=...&page=2&sort=...` directly → sidebar/paging/sort
-      correctly reflect state from the URL.
+- [x] Sort dropdown: changing order (spot-checked price high-to-low / low-to-high — popular/newest
+      not separately covered, same `Select` mechanism) → `sort` query param updates correctly. Note:
+      unlike category/filter changes, changing sort does **not** reset `page` (`updateSortValue` in
+      `Index.vue` never deletes it) — this is asserted, not just noted.
+- [x] Pagination (`components/partials/Pagination.vue`): page navigation keeps active filters in the
+      URL, prev/next disabled at boundaries, prev/next step buttons move exactly one page. Renders
+      only when there are results (hidden entirely on empty state) — asserted via the empty-state
+      case. Known edge case **not** covered: prev/next disabled-state is computed once at initial
+      load from the URL's `page` vs total pages, and only re-corrected via a `pageshow` listener
+      (mainly fires on bfcache back/forward) — a direct deep-link to a `page` far beyond the actual
+      total may show enabled buttons on first paint. Low priority (P2), deferred.
+- [x] Product card: click → navigates correctly to Product Detail (`/{code}`), verified against the
+      clicked card's actual `href` rather than a generic URL pattern. Also covers basic content: every
+      card shows a non-empty product name, at least one price renders in the correct `¥1,234`/
+      `¥1,234~¥5,678` format, and at least one card has a real (non-empty) image `src`.
+  - [ ] Tag rendering by type — **deferred**, not covered. Tag types are broader than previously
+        listed here: besides custom bottle / personalization / custom+personalization / limited
+        store / online-only, `Index.vue`'s tag `v-else-if` chain also has a **Gold-member** tag and a
+        **Gold+personalize combined** tag (checked first, highest priority), plus two independent
+        overlays that can co-occur with any tag: a **drink-ticket badge** (`drink_ticket_flag`) and a
+        **"ROASTERY TOKYO" brand badge** (`brand_code === 'starbucks-reserve-roastery-tokyo'`).
+        Exhaustively testing every variant would need hand-picked product fixtures per tag type,
+        which aren't available against the live catalog — same reasoning as the sidebar's
+        brand/price/category combination trade-off above.
+- [x] Empty state: no-match query → shows message + image, hides both the product grid and
+      pagination. "Doesn't render a stale result sidebar" not separately re-tested here — sidebar
+      behavior is out of scope for this spec (already covered in `sidebar.spec.ts`).
+- [x] Deep-link: opening `/search?query=...&page=2&sort=...` directly → keyword input, current page,
+      and sort dropdown all reflect the URL. Scoped to query/page/sort only — `category_code`
+      deep-linking is already exercised throughout `sidebar.spec.ts`'s own `goto({ category_code })`
+      calls, so it wasn't duplicated here.
 - [x] Responsive: mobile filter button opens/closes the overlay correctly (X button, overlay-backdrop
       click, and submit-button close are all covered; an "open then rotate orientation" case is
       still not covered if needed later).
