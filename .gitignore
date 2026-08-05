@@ -9,3 +9,4 @@ artifacts
 .env.prod
 .DS_Store
 .claude/scheduled_tasks.lock
+.auth/*.json
