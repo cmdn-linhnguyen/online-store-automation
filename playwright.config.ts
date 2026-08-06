@@ -86,7 +86,7 @@ export default defineConfig({
     headless: env.headless,
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
-    video: 'retain-on-failure',
+    video: env.videoMode,
     actionTimeout: env.actionTimeoutMs,
     navigationTimeout: env.navigationTimeoutMs,
     ignoreHTTPSErrors: env.ignoreHttpsErrors,

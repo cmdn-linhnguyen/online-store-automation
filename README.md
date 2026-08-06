@@ -71,6 +71,9 @@ pnpm report
 - `.env.stg`: staging
 - `.env.prod`: production
 - `CROSS_BROWSER=true`: enables Chromium + Firefox + WebKit
+- `VIDEO_MODE`: `off` | `on` | `retain-on-failure` (default) | `on-first-retry` — set to `on` to keep
+  a video for every test (pass or fail), e.g. as evidence for QA sign-off. Videos live under
+  `test-results/`, and are linked from the HTML report (`pnpm report`).
 
 Run per environment:
 
