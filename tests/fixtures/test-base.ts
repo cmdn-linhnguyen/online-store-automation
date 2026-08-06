@@ -1,7 +1,7 @@
 import { test as base, expect } from '@playwright/test';
 
-import { SearchPage } from '../pages/search.page';
-import { MyReviewsPage } from '../pages/my-reviews.page';
+import { SearchPage } from '@pages/search.page';
+import { MyReviewsPage } from '@pages/my-reviews.page';
 
 type AppFixtures = {
   searchPage: SearchPage;
