@@ -167,11 +167,19 @@ Two more live-data behaviors worth knowing before writing more sidebar tests:
 
 ### 4.3 E-Ticket / Coupon listing (`/ticket_items?discount_code=`) — P1
 
-- [ ] Valid discount_code → shows the correct ticket-kind title + list of eligible products.
-- [ ] Invalid/expired discount_code → appropriate empty state or error message.
-- [ ] Sidebar filter behaves like Search (reuse `SidebarFilterComponent`).
-- [ ] Product card shows the "drink-ticket" badge correctly for eligible products.
-- [ ] Pagination works correctly, keeps `discount_code` across pages.
+- [x] Valid discount_code → shows the correct ticket-kind title + list of eligible products
+      (covered for 3 types: 884 "Birthday Reward", 1545 "quyennene", 600 "BO_UT_Test QQne").
+- [x] Invalid/expired discount_code → the real behavior is the generic **no-result empty state**
+      (`.empty-value` + `条件に一致する商品は見つかりませんでした`), not a distinct error message.
+- [x] Sidebar filter behaves like Search (reuses `SidebarFilterComponent` unchanged). Note: the
+      inventory/online-store **checkbox** param is reconstructed on load — asserted via deep-link,
+      not click (radio category/brand assert via click). See `tests/e2e/eticket/eticket.spec.ts`.
+- [x] Product card tags (drink-ticket, ROASTERY TOKYO, online-store, limited-store) — asserted
+      assert-if-present (badge presence depends on the live catalog).
+- [x] Pagination works correctly, keeps `discount_code` across pages.
+- Also covered: SEO title, breadcrumb (Home/マイページ/My Ticket/{ticketKindName}), search-result
+  field UI (name/price/image), SP filter-button drawer open, applied-filter tag show/remove,
+  card→Product-Detail redirection carrying `discount_code`. Route is **public** (no auth).
 
 ### 4.4 Partner/Roastery Search (`/partner`, `/partner/{partner}`) — P2
 
