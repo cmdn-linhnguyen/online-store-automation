@@ -10,3 +10,4 @@ artifacts
 .DS_Store
 .claude/scheduled_tasks.lock
 .auth/*.json
+.vscode

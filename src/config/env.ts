@@ -31,6 +31,7 @@ const envSchema = z.object({
   CROSS_BROWSER: z
     .enum(['true', 'false'])
     .default(process.env.CI === 'true' ? 'true' : 'false'),
+  VIDEO_MODE: z.enum(['off', 'on', 'retain-on-failure', 'on-first-retry']).default('retain-on-failure'),
   TEST_TIMEOUT_MS: z.coerce.number().int().positive().default(60_000),
   EXPECT_TIMEOUT_MS: z.coerce.number().int().positive().default(10_000),
   ACTION_TIMEOUT_MS: z.coerce.number().int().positive().default(15_000),
@@ -51,6 +52,7 @@ export const env = {
   headless: parsedEnv.HEADLESS === 'true',
   ignoreHttpsErrors: parsedEnv.IGNORE_HTTPS_ERRORS === 'true',
   crossBrowser: parsedEnv.CROSS_BROWSER === 'true',
+  videoMode: parsedEnv.VIDEO_MODE,
   testTimeoutMs: parsedEnv.TEST_TIMEOUT_MS,
   expectTimeoutMs: parsedEnv.EXPECT_TIMEOUT_MS,
   actionTimeoutMs: parsedEnv.ACTION_TIMEOUT_MS,
