@@ -35,9 +35,14 @@ const envSchema = z.object({
   EXPECT_TIMEOUT_MS: z.coerce.number().int().positive().default(10_000),
   ACTION_TIMEOUT_MS: z.coerce.number().int().positive().default(15_000),
   NAVIGATION_TIMEOUT_MS: z.coerce.number().int().positive().default(30_000),
+  AUTH_LOGIN_URL: z.string().url().optional(),
+  AUTH_USERNAME: z.string().optional(),
+  AUTH_PASSWORD: z.string().optional(),
 });
 
 const parsedEnv = envSchema.parse(process.env);
+
+export const AUTH_STATE_PATH = '.auth/user.json';
 
 export const env = {
   testEnv: TEST_ENV,
@@ -51,4 +56,9 @@ export const env = {
   actionTimeoutMs: parsedEnv.ACTION_TIMEOUT_MS,
   navigationTimeoutMs: parsedEnv.NAVIGATION_TIMEOUT_MS,
   isCI: process.env.CI === 'true',
+  auth: {
+    loginUrl: parsedEnv.AUTH_LOGIN_URL,
+    username: parsedEnv.AUTH_USERNAME,
+    password: parsedEnv.AUTH_PASSWORD,
+  },
 } as const;
