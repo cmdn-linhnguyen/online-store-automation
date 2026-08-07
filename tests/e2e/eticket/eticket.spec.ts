@@ -75,7 +75,7 @@ test.describe(`ETicket | List ${testTags.regression}`, () => {
       });
     });
 
-    test('should render card tags when present (ROASTERY TOKYO / online-store / limited-store / drink-ticket)', async ({
+    test('should render card tags when present (ROASTERY TOKYO / online-store / limited-store)', async ({
       eticketPage,
     }) => {
       // ID-00135 — assert-if-present: whether a given badge appears depends on the live catalog, so
@@ -86,7 +86,11 @@ test.describe(`ETicket | List ${testTags.regression}`, () => {
       const badges = {
         roasteryTokyo: eticketPage.productList.root.locator('.products-tag-02'),
         onlineStore: eticketPage.productList.root.locator('.products-tag-01--online-store'),
-        drinkTicket: eticketPage.productList.root.locator('.drink-ticket'),
+        // 限定店舗 ("Limits Store") shares the bare `.products-tag-01` class with the online-store
+        // tag, so exclude the online-store modifier to target only the limited-store badge.
+        limitedStore: eticketPage.productList.root.locator(
+          '.products-tag-01:not(.products-tag-01--online-store)',
+        ),
       };
 
       for (const badge of Object.values(badges)) {

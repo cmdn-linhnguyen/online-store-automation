@@ -30,7 +30,7 @@ Test data (all verified, multi-page):
 |---|---|---|
 | ID-00125 | Mở list, kiểm tra sidebar mặc định | Hiện đủ 5 section `カテゴリー / 取り扱い場所 / オンラインストア / ブランド / 価格` |
 | ID-00126 / ID-00134 `@smoke` | Mở list, kiểm tra từng product card | Mỗi card có tên (non-empty); ít nhất 1 giá đúng định dạng `¥1,234`/`¥1,234~¥5,678`; ít nhất 1 ảnh có `src` thật |
-| ID-00135 | Mở list, kiểm tra các badge trên card | Assert-if-present: không ép card cụ thể phải có badge, nhưng badge (ROASTERY TOKYO / online-store / drink-ticket) nào có render thì mọi instance phải có text non-empty (badge rỗng/hỏng vẫn fail) |
+| ID-00135 | Mở list, kiểm tra các badge trên card | Assert-if-present: không ép card cụ thể phải có badge, nhưng badge (ROASTERY TOKYO / online-store / limited-store 限定店舗) nào có render thì mọi instance phải có text non-empty (badge rỗng/hỏng vẫn fail) |
 
 ### Filter tags & search behavior
 
