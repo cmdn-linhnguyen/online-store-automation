@@ -39,6 +39,8 @@ const envSchema = z.object({
   AUTH_LOGIN_URL: z.string().url().optional(),
   AUTH_USERNAME: z.string().optional(),
   AUTH_PASSWORD: z.string().optional(),
+  PARTNER_BASIC_USERNAME: z.string().optional(),
+  PARTNER_BASIC_PASSWORD: z.string().optional(),
 });
 
 const parsedEnv = envSchema.parse(process.env);
@@ -63,4 +65,8 @@ export const env = {
     username: parsedEnv.AUTH_USERNAME,
     password: parsedEnv.AUTH_PASSWORD,
   },
+  partnerHttpBasic:
+    parsedEnv.PARTNER_BASIC_USERNAME && parsedEnv.PARTNER_BASIC_PASSWORD
+      ? { username: parsedEnv.PARTNER_BASIC_USERNAME, password: parsedEnv.PARTNER_BASIC_PASSWORD }
+      : undefined,
 } as const;
