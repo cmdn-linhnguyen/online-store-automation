@@ -90,6 +90,7 @@ export default defineConfig({
     actionTimeout: env.actionTimeoutMs,
     navigationTimeout: env.navigationTimeoutMs,
     ignoreHTTPSErrors: env.ignoreHttpsErrors,
+    ...(env.partnerHttpBasic ? { httpCredentials: env.partnerHttpBasic } : {}),
   },
   projects,
 });
