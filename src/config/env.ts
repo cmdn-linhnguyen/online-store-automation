@@ -42,6 +42,8 @@ const envSchema = z.object({
   REVIEW_PRODUCT_CODE_WITH_REVIEWS: z.string().optional(),
   REVIEW_PRODUCT_CODE_NO_REVIEWS: z.string().optional(),
   REVIEW_EDIT_PATH: z.string().optional(),
+  PARTNER_BASIC_USERNAME: z.string().optional(),
+  PARTNER_BASIC_PASSWORD: z.string().optional(),
 });
 
 const parsedEnv = envSchema.parse(process.env);
@@ -71,4 +73,8 @@ export const env = {
     productCodeNoReviews: parsedEnv.REVIEW_PRODUCT_CODE_NO_REVIEWS,
     editPath: parsedEnv.REVIEW_EDIT_PATH,
   },
+  partnerHttpBasic:
+    parsedEnv.PARTNER_BASIC_USERNAME && parsedEnv.PARTNER_BASIC_PASSWORD
+      ? { username: parsedEnv.PARTNER_BASIC_USERNAME, password: parsedEnv.PARTNER_BASIC_PASSWORD }
+      : undefined,
 } as const;

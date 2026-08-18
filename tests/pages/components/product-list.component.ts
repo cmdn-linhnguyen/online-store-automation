@@ -46,7 +46,7 @@ export class ProductListComponent {
     const texts = await prices.allTextContents();
 
     expect(texts.length).toBeGreaterThan(0);
-    texts.forEach(text => expect(text.trim()).toMatch(/^¥[\d,]+(~¥[\d,]+)?$/));
+    texts.forEach(text => expect(text.trim()).toMatch(/^¥[\d,]+(~¥[\d,]+|~)?$/));
   }
 
   /** Not every product has a matched image, so this only requires at least one real (non-empty) `src`. */

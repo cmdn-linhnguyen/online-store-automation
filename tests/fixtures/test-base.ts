@@ -6,6 +6,7 @@ import { MyReviewsPage } from '../pages/my-reviews.page';
 import { ReviewListPage } from '../pages/review-list.page';
 import { ReviewFormPage } from '../pages/review-form.page';
 import { ProductDetailPage } from '../pages/product-detail.page';
+import { PartnerSearchPage } from '@pages/partner-search.page';
 
 type AppFixtures = {
   searchPage: SearchPage;
@@ -14,6 +15,7 @@ type AppFixtures = {
   reviewListPage: ReviewListPage;
   reviewFormPage: ReviewFormPage;
   productDetailPage: ProductDetailPage;
+  partnerSearchPage: PartnerSearchPage;
 };
 
 export const test = base.extend<AppFixtures>({
@@ -34,6 +36,9 @@ export const test = base.extend<AppFixtures>({
   },
   productDetailPage: async ({ page }, use) => {
     await use(new ProductDetailPage(page));
+  },
+  partnerSearchPage: async ({ page }, use) => {
+    await use(new PartnerSearchPage(page));
   },
 });
 
